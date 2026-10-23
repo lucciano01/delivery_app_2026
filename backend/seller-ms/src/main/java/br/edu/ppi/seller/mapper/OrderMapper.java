@@ -3,10 +3,14 @@ package br.edu.ppi.seller.mapper;
 import br.edu.ppi.seller.domain.ItemOrder;
 import br.edu.ppi.seller.domain.Order;
 import br.edu.ppi.seller.domain.Product;
+import br.edu.ppi.seller.domain.Seller;
 import br.edu.ppi.seller.dto.ItemOrderDTO;
 import br.edu.ppi.seller.dto.OrderCreatedEventDTO;
+import br.edu.ppi.seller.dto.OrderResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
@@ -16,6 +20,12 @@ public interface OrderMapper {
     @Mapping(target = "orderStatus", ignore = true)
     Order orderEventDtoToEntity(OrderCreatedEventDTO eventDTO);
 
+
+    @Mapping(target = "productDTO", source = "product")
     ItemOrderDTO toItemOrderDTO(ItemOrder itemOrder, Product product);
 
+    @Mapping(target = "sellerName", source = "seller.name" )
+    @Mapping(target = "items", source = "items" )
+    OrderResponseDTO toResponseDTO(Order oder, Seller seller,
+                                    List<ItemOrderDTO> items);
 }

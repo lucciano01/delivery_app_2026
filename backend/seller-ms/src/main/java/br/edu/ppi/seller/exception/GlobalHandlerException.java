@@ -55,4 +55,15 @@ public class GlobalHandlerException extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> orderNotFoundHandlerException(OrderNotFoundException ex, WebRequest req){
+        var errorResponseDTO = ErrorResponseDTO.builder()
+                .apiPath(req.getDescription(false))
+                .message(ex.getMessage())
+                .httpStatusCode(HttpStatus.NO_CONTENT.value())
+                .errorTime(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(errorResponseDTO,HttpStatus.NO_CONTENT);
+    }
 }

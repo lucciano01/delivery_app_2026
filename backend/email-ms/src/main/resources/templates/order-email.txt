@@ -1,0 +1,7 @@
+Olá, %s!
+
+Seu pedido foi recebido pelo estabelecimento %s.
+
+Itens do pedido:
+%s
+Total do pedido: %s

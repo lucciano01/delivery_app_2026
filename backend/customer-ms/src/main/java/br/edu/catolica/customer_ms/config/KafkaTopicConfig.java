@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 import static br.edu.catolica.customer_ms.constants.TopicConstants.ORDER_CREATED;
+import static br.edu.catolica.customer_ms.constants.TopicConstants.ORDER_RESPONSE;
 
 @Configuration
 public class KafkaTopicConfig {
@@ -14,6 +15,14 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic orderCreateTopic(){
         return TopicBuilder.name(ORDER_CREATED)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic orderResponseTopic(){
+        return TopicBuilder.name(ORDER_RESPONSE)
                 .partitions(3)
                 .replicas(1)
                 .build();

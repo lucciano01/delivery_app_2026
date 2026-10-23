@@ -1,0 +1,49 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /email-app
+
+spring:
+  application:
+    name: email-ms
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:email_db}
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:admin}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migration: true
+    fail-on-missing-locations: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    consumer:
+      group-id-email: email-ms
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        # order_notification é publicado pelo seller-ms, então ignoramos o header de
+        # tipo dele e desserializamos direto para o nosso próprio contrato
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: br.edu.catolica.delivery.app.email.dto.OrderNotificationEvent
+        spring.json.trusted.packages: br.edu.catolica.delivery.app.email
+
+  # Aponta para o MailHog do docker-compose (SMTP fake p/ dev, UI em http://localhost:8025)
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false

@@ -15,6 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "tb_order")
 public class Order extends BaseEntity{
 
     @Id
