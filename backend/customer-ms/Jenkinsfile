@@ -56,7 +56,11 @@ pipeline {
 
         stage('Carregar no kind') {
             steps {
-                sh 'kind load docker-image "$IMAGE_NAME:$IMAGE_TAG" --name "$KIND_CLUSTER"'
+                // -v 1 mostra a causa real (saída do comando) quando o kind falha;
+                // retry cobre falhas transitórias do "docker exec" no node do kind.
+                retry(3) {
+                    sh 'kind load docker-image "$IMAGE_NAME:$IMAGE_TAG" --name "$KIND_CLUSTER" -v 1'
+                }
             }
         }
 
