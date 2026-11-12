@@ -25,6 +25,7 @@ public class CustomerService {
             Customer customer = customerMapper.dtoToEntity(customerDTO);
             customerRepository.save(customer);
         } catch (Exception e) {
+            System.out.println("Modificando o arquivo para deploy automatico");
             log.error("m=save, error to try save customer with cpf = {} ", customerDTO.cpf());
             throw new CustomerException(e.getMessage());
         }
