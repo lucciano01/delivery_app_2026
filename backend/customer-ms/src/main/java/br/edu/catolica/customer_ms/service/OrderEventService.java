@@ -101,6 +101,7 @@ public class OrderEventService {
 
         Order order = orderRepository.findByOrderCode(orderStatusUpdateDTO.orderCode())
                 .orElseThrow(() -> {
+                    System.out.println("teste");
                     log.warn("m=applyOrderStatusUpdate, order not found to order code = {} ",orderStatusUpdateDTO.orderCode());
                     return new OrderNotFoundException(ORDER_MESSAGE_204);
                 });
