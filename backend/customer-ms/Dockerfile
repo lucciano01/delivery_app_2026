@@ -15,7 +15,8 @@ RUN ./gradlew bootJar -x test --no-daemon
 FROM eclipse-temurin:26-jre
 WORKDIR /app
 
-COPY --from=build /app/build/libs/customer-ms-0.0.1-SNAPSHOT.jar customer-ms.jar
+# Curinga: o nome do jar muda com a versão do build.gradle (só o bootJar é gerado)
+COPY --from=build /app/build/libs/*.jar customer-ms.jar
 
 EXPOSE 8081
 

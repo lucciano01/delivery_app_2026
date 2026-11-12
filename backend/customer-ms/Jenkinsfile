@@ -27,8 +27,18 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    env.IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    // Tag = versão do build.gradle (sem -SNAPSHOT) + número do build. Ex.: 1.2.0-15
+                    def appVersion = sh(
+                        script: "sed -n \"s/^version *= *['\\\"]\\(.*\\)['\\\"].*/\\1/p\" ${env.APP_DIR}/build.gradle | sed 's/-SNAPSHOT\$//'",
+                        returnStdout: true
+                    ).trim()
+                    if (!appVersion) {
+                        error "Não foi possível ler a versão de ${env.APP_DIR}/build.gradle"
+                    }
+                    env.GIT_COMMIT_SHORT = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = "${appVersion}-${env.BUILD_NUMBER}"
                 }
+                echo "Commit: ${env.GIT_COMMIT_SHORT}"
                 echo "Imagem que será gerada: ${env.IMAGE_NAME}:${env.IMAGE_TAG}"
             }
         }
