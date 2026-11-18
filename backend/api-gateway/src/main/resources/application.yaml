@@ -1,0 +1,39 @@
+customer-api: lb//customer-app:8081
+seller-api: lb//seller-app:8082
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: create-customer
+              uri: ${customer-api}
+              predicates:
+                - Path=/api/v1/customer/create
+                - Method=POST
+            - id: seller-products
+              uri: ${customer-api}
+              predicates:
+                - Path=/api/v1/customer/{sellerId}
+                - Method=GET
+            - id: create-order
+              uri: ${customer-api}
+              predicates:
+                - Path=/api/v1/order/create
+                - Method=POST
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

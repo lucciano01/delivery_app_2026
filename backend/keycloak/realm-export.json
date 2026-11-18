@@ -1,0 +1,141 @@
+{
+  "realm": "delivery-app",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "registrationEmailAsUsername": true,
+  "resetPasswordAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "CUSTOMER",
+        "description": "Cliente do delivery"
+      },
+      {
+        "name": "SELLER",
+        "description": "Vendedor do delivery"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "delivery-frontend",
+      "name": "Delivery React",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${FRONTEND_URL}/*"
+      ],
+      "webOrigins": [
+        "${FRONTEND_URL}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "${FRONTEND_URL}/*"
+      },
+      "baseUrl": "${FRONTEND_URL}"
+    },
+    {
+      "clientId": "delivery-registration",
+      "name": "Cadastro de usuários (Admin API)",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "${KC_REGISTRATION_CLIENT_SECRET}",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": [
+        "basic",
+        "roles",
+        "kc-admin-api"
+      ]
+    },
+    {
+      "clientId": "delivery-dev-cli",
+      "name": "Somente testes com curl em dev",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-delivery-registration",
+      "enabled": true,
+      "serviceAccountClientId": "delivery-registration",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "view-realm"
+        ]
+      }
+    },
+    {
+      "username": "cliente@teste.com",
+      "email": "cliente@teste.com",
+      "firstName": "Cliente",
+      "lastName": "Teste",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Teste@123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "CUSTOMER"
+      ]
+    },
+    {
+      "username": "vendedor@teste.com",
+      "email": "vendedor@teste.com",
+      "firstName": "Vendedor",
+      "lastName": "Teste",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Teste@123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "SELLER"
+      ]
+    }
+  ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"required\":{\"roles\":[\"admin\",\"user\"]}},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"phoneNumber\",\"displayName\":\"Telefone\",\"validations\":{\"pattern\":{\"pattern\":\"^\\\\+?[0-9]{10,13}$\",\"error-message\":\"Telefone inválido\"}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"group\":\"contato\"},{\"name\":\"cpf\",\"displayName\":\"CPF\",\"validations\":{\"pattern\":{\"pattern\":\"^[0-9]{11}$\",\"error-message\":\"CPF deve ter 11 dígitos\"}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false,\"group\":\"dados-customer\"},{\"name\":\"street\",\"displayName\":\"Rua\",\"validations\":{\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"group\":\"endereco-customer\"},{\"name\":\"number\",\"displayName\":\"Número\",\"validations\":{\"length\":{\"max\":20}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"group\":\"endereco-customer\"},{\"name\":\"district\",\"displayName\":\"Bairro\",\"validations\":{\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"group\":\"endereco-customer\"},{\"name\":\"city\",\"displayName\":\"Cidade\",\"validations\":{\"length\":{\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false,\"group\":\"endereco-customer\"}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"},{\"name\":\"contato\",\"displayHeader\":\"Contato\",\"displayDescription\":\"Dados de contato (customer e seller)\"},{\"name\":\"dados-customer\",\"displayHeader\":\"Dados do customer\",\"displayDescription\":\"Atributos exclusivos de customer\"},{\"name\":\"endereco-customer\",\"displayHeader\":\"Endereço\",\"displayDescription\":\"Endereço do customer\"}],\"unmanagedAttributePolicy\":\"ADMIN_VIEW\"}"
+          ]
+        }
+      }
+    ]
+  },
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "pt-BR"
+  ],
+  "defaultLocale": "pt-BR"
+}
